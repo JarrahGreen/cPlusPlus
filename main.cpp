@@ -1,9 +1,9 @@
 #include <cstring>
 #include <iostream>
 #include <string>
-using namespace std;
-#include <iostream>
 #include <fstream>
+using namespace std;
+
 
 bool access(const string& userName, const string& password) {
     string line;
