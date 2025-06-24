@@ -1,26 +1,95 @@
+#include <cstring>
 #include <iostream>
 #include <string>
 using namespace std;
+#include <iostream>
+#include <fstream>
 
-string* updateName(string* namePointer) {
-    *namePointer = "Jeff";
+bool access(const string& userName, const string& password) {
+    string line;
+    ifstream myFile("database.txt");
 
-    return namePointer;
+
+    while (getline(myFile, line)) {
+        //find the comma in the line
+        size_t commaPos = line.find(',');
+
+        // if the comma is not at the end of the string
+        if (commaPos != string::npos) {
+            // the part before the comma
+            string fileUser = line.substr(0, commaPos);
+
+            // the part after the comma
+            string filePass = line.substr(commaPos + 1);
+
+
+            if (fileUser == userName && filePass == password) {
+                return true;
+            }
+
+        }
+        else {
+            cout << line << endl;
+        }
+
+    }
+    myFile.close();
+    return false;
 }
 
 int main() {
-    string name = "Dylan";
+    cout << "Welcome!\n1: Login\n2: Create new account\n";
+    string loginOrNew, username, password;
+    cin >> loginOrNew;
 
-    string* namePointer = &name;
+    if (loginOrNew == "1") {
+        bool retry = false;
+        do {
+            cout << "Username: ";
+            cin >> username;
 
-    cout << namePointer << endl;
+            cout << "Password: ";
+            cin >> password;
 
-    *namePointer = "Bob";
+            if (access(username, password)) {
+                cout << "Logged in!\n";
+            }
 
-    cout << name << endl;
+            else {
+                cout << "Your username or password is incorrect!\n";
 
-    updateName(namePointer);
+                cout << "Do you want to retry logging in? (Y/n)\n";
+                string loginRetry;
+                cin >> loginRetry;
+                if (loginRetry != "n") {
+                    retry = true;
+                }
+                else {
+                    cout << "Exiting system!\n";
+                    exit(0);
+                }
+            }
+        } while (retry);
 
-    cout << name << endl;
+    }
 
+    if (loginOrNew == "2") {
+        cout << "Username: ";
+        cin >> username;
+
+        cout << "Password: ";
+        cin >> password;
+
+
+        ofstream MyFile("database.txt", ios::app);
+
+
+        MyFile << username << "," << password << "\n";
+
+        MyFile.close();
+
+        cout << "Account created successfully!\n";
+    }
+
+    cout << "Account username: " << username;
 }
